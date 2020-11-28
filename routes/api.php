@@ -19,3 +19,9 @@ Route::post('api-test', function (Request $request) {
         'name' => $request->file('file')->getClientOriginalName()
     ]);
 });
+
+
+Route::post('import', [
+    'as' => 'contact.import',
+    'uses' => '\App\Http\Controllers\ContactAPIController@import'
+]);
