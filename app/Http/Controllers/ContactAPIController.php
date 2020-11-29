@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\CustomAttribute;
+use App\Services\SaveCSVData;
 use Illuminate\Http\Request;
-use App\Services\CSVImportService;
+use App\Services\CSVDataFormatter;
 
 class ContactAPIController extends Controller
 {
@@ -14,31 +15,17 @@ class ContactAPIController extends Controller
         $path = $request->file('csv_file')->getRealPath();
 
         if (($handle = fopen($path, "r")) !== FALSE) {
-            $service = new CSVImportService($path);
+            $service = new CSVDataFormatter($path);
             $data = $service->formatItems($handle);
 
             if($service->is_valid_csv) {
-                foreach ($data as $item) {
-                    $contact = Contact::create($item['mapped']);
-
-                    if(count($item['unmapped']))
-                    {
-                        $attr_data = $item['unmapped'];
-                        foreach ($attr_data as $key => $value) {
-                            $data = [
-                                'key' => $key,
-                                'value' => $value,
-                                'contact_id' => $contact->id
-                            ];
-
-                            CustomAttribute::create($data);
-                        }
-                    }
+                try {
+                    $db_save = new SaveCSVData($data);
+                    $db_save->make();
+                }catch (\Exception $exception) {
+                    return response()->json(['success' => false], 500);
                 }
-
-                return response()->json([
-                    'success' => true,
-                ]);
+                return response()->json(['success' => true]);
             }
 
             return response()->json([

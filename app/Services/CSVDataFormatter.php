@@ -3,7 +3,7 @@
 namespace App\Services;
 
 
-class CSVImportService
+class CSVDataFormatter
 {
     public $delimiter;
 
@@ -82,7 +82,6 @@ class CSVImportService
 
         if(! strlen($column_name) || ! isset($this->map_fields[$column_name]))
             return $this->is_valid_csv;
-
 
         if(in_array('required', $this->map_fields[$column_name]) && ! strlen($value))
             $this->is_valid_csv = false;
