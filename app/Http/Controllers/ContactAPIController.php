@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ImportCSVRequest;
+use App\Http\Resources\ContactsAPIResource;
+use App\Models\Contact;
 use App\Services\SaveCSVData;
 use Illuminate\Http\Request;
 use App\Services\CSVDataFormatter;
 
 class ContactAPIController extends Controller
 {
+    public function index()
+    {
+        $contacts = Contact::with('customAttributes')->get();
+        return response()->json([
+            'contacts' => ContactsAPIResource::collection($contacts)
+        ]);
+    }
     public function import(ImportCSVRequest $request)
     {
         $path = $request->file('csv_file')->getRealPath();

@@ -25,3 +25,8 @@ Route::post('import', [
     'as' => 'contact.import',
     'uses' => '\App\Http\Controllers\ContactAPIController@import'
 ]);
+
+Route::get('contacts', [
+    'as' => 'contact.index',
+    'uses' => '\App\Http\Controllers\ContactAPIController@index'
+]);
