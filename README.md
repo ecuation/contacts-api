@@ -20,7 +20,7 @@ Run Laravel migrations with artisan command
 $ php artisan migrate
 ```
 
-Run phpunit test
+Run phpunit tests
 ```sh
 $ php artisan test
 ```
