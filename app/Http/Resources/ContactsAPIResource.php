@@ -15,12 +15,13 @@ class ContactsAPIResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'team_id' => $this->team_id,
-            'name' => $this->name,
-            'phone' => $this->phone,
-            'email' => $this->email,
-            'sticky_phone_number_id' => $this->sticky_phone_number_id,
+            'mapped_attributes' => [
+                'team_id' => $this->team_id,
+                'name' => $this->name,
+                'phone' => $this->phone,
+                'email' => $this->email,
+                'sticky_phone_number_id' => $this->sticky_phone_number_id,
+            ],
             'custom_attributes' => CustomAttributesResource::collection($this->customAttributes)
         ];
     }

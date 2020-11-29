@@ -15,7 +15,7 @@ class CustomAttributesResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'contact_id' => $this->contact_id,
+            // 'contact_id' => $this->contact_id,
             'key' => $this->key,
             'value' => $this->value,
         ];
