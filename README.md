@@ -18,7 +18,9 @@ $ cp .env.example ./.env
 Run Laravel migrations with artisan command
 ```sh
 $ php artisan migrate
+```
 
-Run phpunit tests
+Run phpunit test
 ```sh
 $ php artisan test
+```
