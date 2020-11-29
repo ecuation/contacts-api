@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('api-test', function (Request $request) {
+/*Route::post('import-csv', function (Request $request) {
     return response()->json([
         'test' => true,
-        'name' => $request->file('file')->getClientOriginalName()
+        'name' => $request->file('csv_file')->getClientOriginalName()
     ]);
-});
+});*/
 
 
 Route::post('import', [

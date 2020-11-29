@@ -24,7 +24,7 @@ class ContactControllerTest extends TestCase
 
         copy($file, $path);
 
-        $response = $this->postJson(route('contact.import'), [
+        $response = $this->post(route('contact.import'), [
             'csv_file' => new UploadedFile($path, $name, filesize($path), null, true),
         ], []);
 

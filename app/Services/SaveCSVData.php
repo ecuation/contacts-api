@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Models\Contact;
 use App\Models\CustomAttribute;
