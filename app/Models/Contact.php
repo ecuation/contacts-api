@@ -21,4 +21,8 @@ class Contact extends Model
         'email',
         'sticky_phone_number_id',
     ];
+
+    public function customAttributes() {
+        return $this->hasMany(CustomAttribute::class);
+    }
 }

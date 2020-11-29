@@ -9,7 +9,7 @@ class CSVImportService
 
     public $file_path;
 
-    public $default_fields;
+    public $map_fields;
 
     public $is_valid_csv;
 
@@ -18,12 +18,12 @@ class CSVImportService
         $this->is_valid_csv = true;
         $this->file_path = $file_path;
         $this->delimiter = $delimiter;
-        $this->default_fields = [
-            'team_id',
-            'name',
-            'phone',
-            'email',
-            'sticky_phone_number_id',
+        $this->map_fields = [
+            'team_id' => ['required', 'integer'],
+            'name' => [],
+            'phone' => ['required'],
+            'email' => [],
+            'sticky_phone_number_id' => [],
         ];
     }
 
@@ -31,9 +31,9 @@ class CSVImportService
     {
         $delimiters = [',' => 0, ';' => 0, "|" => 0, "\t" => 0];
 
-        $handle = fopen($this->file_path, "r");
-        $firstLine = fgets($handle);
-        fclose($handle);
+        $file = fopen($this->file_path, "r");
+        $firstLine = fgets($file);
+        fclose($file);
         foreach ($delimiters as $delimiter => &$count) {
             $count = count(str_getcsv($firstLine, $delimiter));
         }
@@ -42,44 +42,55 @@ class CSVImportService
     }
 
 
-    public function formatItems($handle) {
+    public function formatItems($file) {
         $auto_delimiter = $this->getDelimiter();
-        $columns = fgetcsv($handle, null, $auto_delimiter);
+        $columns = fgetcsv($file, null, $auto_delimiter);
         $rows = [];
 
-        while (($data = fgetcsv($handle, null, $auto_delimiter)) !== FALSE) {
+        while (($data = fgetcsv($file, null, $auto_delimiter)) !== FALSE) {
             if(count($columns) === count($data)) {
                 $rows[] = array_combine($columns, $data);
             }
         }
 
-        fclose($handle);
+        fclose($file);
 
         return $this->getDataGroupedByMappedOrNotMapped($rows);
     }
-
 
     public function getDataGroupedByMappedOrNotMapped($rows)
     {
         $insert = [];
         foreach ($rows as $index => $row) {
             $insert[$index] = ['mapped' => [], 'unmapped' => []];
-            foreach ($row as $row_index => $value) {
-                $this->checkIsValidRowAndValidateCSV($row_index);
-
-                if(in_array($row_index, $this->default_fields)) {
-                    $insert[$index]['mapped'] += [$row_index => $value];
+            foreach ($row as $column_name => $value) {
+                if(in_array($column_name, array_keys($this->map_fields))) {
+                    $insert[$index]['mapped'] += [$column_name => $value];
                 }else {
-                    $insert[$index]['unmapped'] += [$row_index => $value];
+                    $insert[$index]['unmapped'] += [$column_name => $value];
                 }
+                $this->checkIsValidCSV($column_name, $value, $insert);
             }
         }
+
         return $insert;
     }
 
-    public function checkIsValidRowAndValidateCSV($row_index)
+    public function checkIsValidCSV($column_name, $value, $insert)
     {
-        if(!strlen($row_index)) $this->is_valid_csv = false;
+        if (! count($insert[0]['mapped'])) $this->is_valid_csv = false;
+
+        if(! strlen($column_name) || ! isset($this->map_fields[$column_name]))
+            return $this->is_valid_csv;
+
+
+        if(in_array('required', $this->map_fields[$column_name]) && ! strlen($value))
+            $this->is_valid_csv = false;
+
+        if(in_array('integer', $this->map_fields[$column_name]) && ! is_numeric($value))
+            $this->is_valid_csv = false;
+
         return $this->is_valid_csv;
     }
+
 }

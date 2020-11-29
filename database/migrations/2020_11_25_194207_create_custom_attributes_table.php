@@ -16,7 +16,7 @@ class CreateCustomAttributesTable extends Migration
         Schema::create('custom_attributes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('contact_id');
-            $table->foreign('contact_id')->references('id')->on('users');
+            $table->foreign('contact_id')->references('id')->on('contacts');
             $table->string('key')->nullable();
             $table->string('value');
             $table->timestamps();

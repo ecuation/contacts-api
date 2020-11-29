@@ -28,6 +28,6 @@ class ContactControllerTest extends TestCase
             'csv_file' => new UploadedFile($path, $name, filesize($path), null, true),
         ], []);
 
-        // $response->assertStatus(200);
+        $response->assertStatus(200);
     }
 }
